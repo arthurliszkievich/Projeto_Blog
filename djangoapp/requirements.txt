@@ -4,3 +4,5 @@ sqlparse==0.5.3
 tzdata==2025.2
 psycopg2-binary==2.9.6,<2.10
 pytz==2023.3
+gunicorn
+python-decouple

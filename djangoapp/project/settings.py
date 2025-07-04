@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+from decouple import config  # type: ignore
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,10 +25,11 @@ DATA_DIR = BASE_DIR.parent / 'data' / 'web'
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'change-me')
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False').lower() in ('true', '1', 't')
+# O cast=bool converte "1" para True e "0" para False)
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = [
     h.strip() for h in os.getenv('ALLOWED_HOSTS', '').split(',')
@@ -81,18 +83,13 @@ WSGI_APPLICATION = 'project.wsgi.application'
 
 DATABASES = {
     'default': {
-        # os.getenv lê o valor da variável de ambiente 'DB_ENGINE'
-        'ENGINE': os.getenv('DB_ENGINE', 'change-me'),
-        # os.getenv lê o valor da variável de ambiente 'POSTGRES_DB'
-        'NAME': os.getenv('POSTGRES_DB', 'change-me'),
-        # os.getenv lê o valor da variável de ambiente 'POSTGRES_USER'
-        'USER': os.getenv('POSTGRES_USER', 'change-me'),
-        # os.getenv lê o valor da variável de ambiente 'POSTGRES_PASSWORD'
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'change-me'),
-        # os.getenv lê o valor da variável de ambiente 'POSTGRES_HOST'
-        'HOST': os.getenv('POSTGRES_HOST', 'change-me'),
-        # os.getenv lê o valor da variável de ambiente 'POSTGRES_PORT'
-        'PORT': os.getenv('POSTGRES_PORT', 'change-me'),
+        'ENGINE': config('DB_ENGINE'),
+        'NAME': config('POSTGRES_DB'),
+        'USER': config('POSTGRES_USER'),
+        'PASSWORD': config('POSTGRES_PASSWORD'),
+        'HOST': config('POSTGRES_HOST'),
+        # cast=int converte o número da porta
+        'PORT': config('POSTGRES_PORT', cast=int),
     }
 }
 
@@ -142,6 +139,7 @@ MEDIA_ROOT = DATA_DIR / 'media'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

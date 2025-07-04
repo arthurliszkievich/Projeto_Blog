@@ -1,50 +1,68 @@
-FROM python:3.11.3-alpine3.18
-LABEL mantainer="arthur.liszkievich@gmail.com"
+# Modelo de Dockerfile para mim
 
-# Essa variável de ambiente é usada para controlar se o Python deve 
-# gravar arquivos de bytecode (.pyc) no disco. 1 = Não, 0 = Sim
-ENV PYTHONDONTWRITEBYTECODE 1
+# --- Estágio 1: "Builder" ---
+FROM python:3.10-slim-bookworm AS builder
 
-# Define que a saída do Python será exibida imediatamente no console ou em 
-# outros dispositivos de saída, sem ser armazenada em buffer.
-# Em resumo, você verá os outputs do Python em tempo real.
-ENV PYTHONUNBUFFERED 1
+# Variáveis de ambiente para um build limpo e eficiente
+ENV PYTHONDONTWRITEBYTECODE=1 
+ENV PYTHONUNBUFFERED=1
 
-# Copia a pasta "djangoapp" e "scripts" para dentro do container.
-COPY djangoapp /djangoapp
-COPY scripts /scripts
+# Instala as dependências do sistema necessárias para compilar pacotes Python
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential libpq-dev
 
-# Entra na pasta djangoapp no container
-WORKDIR /djangoapp
+# Cria um ambiente virual isolado dentro da imagem
+RUN python -m venv /opt/venv
+# Ativa o venv para os comandos subsequentes nesta etapa
+ENV PATH="/opt/venv/bin:$PATH"
 
-# A porta 8000 estará disponível para conexões externas ao container
-# É a porta que vamos usar para o Django.
+# Copia apenas o arquivo de requisitos para otimizar o cache
+WORKDIR /app
+COPY ./djangoapp/requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+# --- Estágio 2: "Runtime" ---
+FROM python:3.10-slim-bookworm AS runtime
+
+# Instala apenas as dependências de sistema necessárias para RODAR a aplicação
+# `libpq5` é a bibilioteca de runtime para o PostgreSQL, muito menor que o `libpq-dev`
+RUN apt-get update && apt-get install -y --no-install-recommends libpq5 && rm -rf /var/lib/apt/lists/*
+
+# Cria um usuário e grupo não-root para a aplicação
+RUN addgroup --system django && adduser --system -ingroup django django
+
+# Cria um diretório da aplicação
+WORKDIR /home/django/web
+
+# Copia o ambiente virtual do estágio de build
+# A vantagem é que a imagem final não tem as ferramentas de build, apenas o ambiente virtual
+COPY --from=builder /opt/venv /opt/venv
+
+#Copia o script da entrypoint
+COPY ./entrypoint.prod.sh /entrypoint.prod.sh
+RUN sed -i 's/\r$//g' /entrypoint.prod.sh && chmod +x /entrypoint.prod.sh
+
+# Copia o código da aplicação para o diretório de trabalho
+COPY ./djangoapp .
+
+
+
+# Define o dono de todos os arquivos para o usuário não-root 
+# Isso é importante para evitar problemas de permissão
+RUN chown -R django:django /home/django/web /entrypoint.prod.sh
+
+# Muda para o usuário não-root
+USER django
+
+# Degine o PATH para que o sistema use o python e os pacotes do venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Expõe a porta que o Gunicorn usará
 EXPOSE 8000
 
-# RUN executa comandos em um shell dentro do container para construir a imagem. 
-# O resultado da execução do comando é armazenado no sistema de arquivos da 
-# imagem como uma nova camada.
-# Agrupar os comandos em um único RUN pode reduzir a quantidade de camadas da 
-# imagem e torná-la mais eficiente.
-RUN python -m venv /venv && \
-  /venv/bin/pip install --upgrade pip && \
-  /venv/bin/pip install -r /djangoapp/requirements.txt && \
-  adduser --disabled-password --no-create-home duser && \
-  mkdir -p /data/web/static && \
-  mkdir -p /data/web/media && \
-  chown -R duser:duser /venv && \
-  chown -R duser:duser /data/web/static && \
-  chown -R duser:duser /data/web/media && \
-  chmod -R 755 /data/web/static && \
-  chmod -R 755 /data/web/media && \
-  chmod -R +x /scripts
+# Define o entrypoint. Ele sera executado ANTES do CMD
 
-# Adiciona a pasta scripts e venv/bin 
-# no $PATH do container.
-ENV PATH="/scripts:/venv/bin:$PATH"
+# Comando padrão para rodar a aplicação (será executado pelo o entrypoint)
+CMD ["gunicorn", "project.wsgi:application", "--bind", "0.0.0.0:8000"]
 
-# Muda o usuário para duser
-USER duser
 
-# Executa o arquivo scripts/commands.sh
-CMD ["commands.sh"]

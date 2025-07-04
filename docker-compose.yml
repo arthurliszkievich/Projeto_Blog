@@ -1,24 +1,46 @@
-version: '3.9'
-
 services:
   djangoapp:
     container_name: djangoapp
     build:
       context: .
     ports:
-      - 8000:8000
+      - "8000:8000"
+    # Para desenvolvimento, mantenha-os. Para produção, comente-os.
     volumes:
-      - ./djangoapp:/djangoapp
-      - ./data/web/static:/data/web/static/
-      - ./data/web/media:/data/web/media/
-    env_file:
-      - ./dotenv_files/.env
+      - ./djangoapp:/home/django/web  # Mantenha para dev, comente para prod
+      - ./static:/home/django/web/static # Mantenha para dev, comente para prod
+      # Mapeia o .env da raiz para a raiz do WORKDIR no container
+      - ./.env:/home/django/web/.env 
+        # Volumes para dados persistentes
+      - ./data/web/static:/home/django/web/staticfiles # Volume para arquivos estáticos coletados
+      - ./data/web/media:/home/django/web/mediafiles   # Volume para uploads de mídia
     depends_on:
-      - psql
+      psql:
+        condition: service_healthy # Espera o healthcheck ser bem-sucedido
+    networks:
+      - django_network # Conecta à nossa rede dedicada para o projeto
+
   psql:
     container_name: psql
     image: postgres:16-alpine
     volumes:
-      - ./data/postgres/data:/var/lib/postgresql/data/
-    env_file:
-      - ./dotenv_files/.env
+      - postgres_data:/var/lib/postgresql/data/ # Usando um volume nomeado
+    environment:
+        POSTGRES_USER: ${POSTGRES_USER}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        POSTGRES_DB: ${POSTGRES_DB}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - django_network # Conecta à nossa rede dedicada
+
+volumes:
+  postgres_data: # Define o volume nomeado
+
+networks:
+  django_network: # Define nossa rede dedicada
+    driver: bridge

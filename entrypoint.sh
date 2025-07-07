@@ -10,9 +10,3 @@ while ! nc -z $POSTGRES_HOST $POSTGRES_PORT; do
 done
 
 echo "✅ Postgres Database Started Successfully ($POSTGRES_HOST:$POSTGRES_PORT)"
-
-
-collectstatic.sh
-makemigrations.sh
-migrate.sh
-runserver.sh

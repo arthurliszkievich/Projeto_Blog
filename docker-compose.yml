@@ -3,44 +3,64 @@ services:
     container_name: djangoapp
     build:
       context: .
+      dockerfile: Dockerfile
+    
+    # Sobrescreve o CMD do Dockerfile para usar o servidor de desenvolvimento do Django,
+    # que possui recarregamento automático (hot-reloading).
+    command: python manage.py runserver 0.0.0.0:8000
+
     ports:
       - "8000:8000"
-    # Para desenvolvimento, mantenha-os. Para produção, comente-os.
+
+    # Volumes para desenvolvimento: mapeiam seu código local para o container,
+    # permitindo que as alterações reflitam instantaneamente.
+    # Para deploy em produção, esta seção de volumes de código seria comentada.
     volumes:
-      - ./djangoapp:/home/django/web  # Mantenha para dev, comente para prod
-      - ./static:/home/django/web/static # Mantenha para dev, comente para prod
-      # Mapeia o .env da raiz para a raiz do WORKDIR no container
-      - ./.env:/home/django/web/.env 
-        # Volumes para dados persistentes
-      - ./data/web/static:/home/django/web/staticfiles # Volume para arquivos estáticos coletados
-      - ./data/web/media:/home/django/web/mediafiles   # Volume para uploads de mídia
+      # Mapeia a pasta do código da aplicação
+      - ./djangoapp:/home/django/web
+      # Mapeia a pasta de estáticos de desenvolvimento
+      - ./static:/home/django/web/static
+      # Mapeia o arquivo .env para que o python-decouple possa lê-lo
+      - ./.env:/home/django/web/.env
+      # Mapeia os volumes de dados para que possamos inspecioná-los no PC, se necessário
+      - ./data/web/staticfiles:/home/django/web/staticfiles
+      - ./data/web/media:/home/django/web/mediafiles
+
     depends_on:
       psql:
-        condition: service_healthy # Espera o healthcheck ser bem-sucedido
+        condition: service_healthy # Espera o banco de dados estar saudável para iniciar
+
     networks:
-      - django_network # Conecta à nossa rede dedicada para o projeto
+      - django_network
 
   psql:
     container_name: psql
     image: postgres:16-alpine
     volumes:
-      - postgres_data:/var/lib/postgresql/data/ # Usando um volume nomeado
+      - postgres_data:/var/lib/postgresql/data/
+    
+    # Carrega as variáveis de ambiente para o container do Postgres
+    # e para o healthcheck funcionar corretamente.
     environment:
-        POSTGRES_USER: ${POSTGRES_USER}
-        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-        POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
+      
     networks:
-      - django_network # Conecta à nossa rede dedicada
+      - django_network
 
+# Define o volume nomeado para persistir os dados do banco de dados
 volumes:
-  postgres_data: # Define o volume nomeado
+  postgres_data:
 
+# Define a rede dedicada para os serviços se comunicarem
 networks:
-  django_network: # Define nossa rede dedicada
+  django_network:
     driver: bridge

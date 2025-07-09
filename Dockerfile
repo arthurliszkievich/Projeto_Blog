@@ -34,6 +34,8 @@ RUN addgroup --system django && adduser --system -ingroup django django
 # Cria um diretório da aplicação
 WORKDIR /home/django/web
 
+RUN mkdir -p /home/django/data
+
 # Copia o ambiente virtual do estágio de build
 # A vantagem é que a imagem final não tem as ferramentas de build, apenas o ambiente virtual
 COPY --from=builder /opt/venv /opt/venv
@@ -49,7 +51,7 @@ COPY ./djangoapp .
 
 # Define o dono de todos os arquivos para o usuário não-root 
 # Isso é importante para evitar problemas de permissão
-RUN chown -R django:django /home/django/web /entrypoint.prod.sh
+RUN chown -R django:django /home/django/web /home/django/data /entrypoint.prod.sh
 
 # Muda para o usuário não-root
 USER django

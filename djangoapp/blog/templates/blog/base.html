@@ -1,14 +1,22 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     {% include 'blog/partials/_head.html' %}
 </head>
 <body>
-    <h1>Exemplo: {{ site_setup.title }} </h1>
-    <h1>Exemplo: {{ site_setup.description }} </h1>
-    {% include 'blog/partials/_header.html' %}
-    {% block content %} {% endblock content %}
-    {% include 'blog/partials/_pagination.html' %}
-    {% include 'blog/partials/_footer.html' %}
+    <!-- Esta classe usa flexbox para organizar o layout verticalmente -->
+    <div class="blog-wrapper">
+
+        {% include 'blog/partials/_header.html' %}
+
+        <!-- A classe "main-content" empurra o rodapé para baixo -->
+        <main class="main-content section-gap">
+            {% block content %}{% endblock content %}
+        </main>
+
+        {% include 'blog/partials/_footer.html' %}
+        
+    </div>
 </body>
 </html>

@@ -1,5 +1,12 @@
+<!-- index.html - VERSÃO CORRIGIDA -->
 {% extends 'blog/base.html' %}
 
 {% block content %}
-    <h1>Home</h1>
+  <div class="main-content-container section-content-wide">
+    <div class="card-grid">
+      {% for post in page_obj %}
+        {% include 'blog/partials/_post-card.html' %}
+      {% endfor %}
+    </div>
+  </div>
 {% endblock content %}

@@ -14,15 +14,10 @@ from pathlib import Path
 import os
 from decouple import config  # type: ignore
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-# Arquivos staticos: /data/web/static
-# Arquivos de mídia: /data/web/media
-DATA_DIR = BASE_DIR.parent / 'data' / 'web'
-
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
@@ -135,17 +130,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
-# DATA_DIR = data/web/static
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # -> /app/staticfiles
 
 MEDIA_URL = '/media/'
-# DATA_DIR = data/web/media
-MEDIA_ROOT = DATA_DIR / 'media'
+MEDIA_ROOT = BASE_DIR / 'media'  # -> /app/media
 
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    BASE_DIR / 'static',  # -> /app/static
 ]
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

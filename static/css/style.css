@@ -157,6 +157,13 @@ input[type='search']::-webkit-search-results-decoration {
 }
 
 /* Blog */
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
 body,
 html,
 .blog-wrapper {
@@ -468,8 +475,3 @@ html,
   text-decoration: none;
 }
 
-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}

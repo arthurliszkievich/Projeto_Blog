@@ -19,16 +19,22 @@ services:
     # permitindo que as alterações reflitam instantaneamente.
     # Para deploy em produção, esta seção de volumes de código seria comentada.
     volumes:
-      # Mapeia a pasta do código da aplicação
-      - ./djangoapp:/home/django/web
-      # Mapeia a pasta de estáticos de desenvolvimento
-      - ./static:/home/django/web/static
-      # Mapeia o arquivo .env para que o python-decouple possa lê-lo
-      - ./.env:/home/django/web/.env
-      # Mapeia os volumes de dados para que possamos inspecioná-los no PC, se necessário
-      - ./data/web/staticfiles:/home/django/web/staticfiles
-      - ./data/web/media:/home/django/web/mediafiles
+      # 1. Mapeia o código da sua aplicação
+      - ./djangoapp:/app
+      
+      # 2. Mapeia seu arquivo de configuração
+      - ./djangoapp:/app
+
+      # 3. Mapeia a pasta de uploads
+      # Cria uma pasta 'media' na raiz do seu projeto local.
+      - ./media:/app/media
+
+      # 4. Mapeia a pasta de estáticos
+      # Mapeia a pasta 'static' da raiz do seu projeto para o container.
       - ./static:/app/static
+
+      # 5. Mapeia a pasta onde o 'collectstatic' irá jogar os arquivos para produção.
+      - ./staticfiles:/app/staticfiles
 
     depends_on:
       psql:

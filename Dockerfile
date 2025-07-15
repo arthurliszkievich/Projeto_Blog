@@ -52,6 +52,9 @@ COPY --from=builder /opt/venv /opt/venv
 # Copia o código da aplicação do seu computador para o diretório de trabalho na imagem.
 COPY ./djangoapp .
 
+# Criação dos diretórios de mídia e estáticos DENTRO do workdir
+RUN mkdir -p /app/media /app/staticfiles
+
 # Define o dono de todos os arquivos da aplicação para o nosso usuário `django`.
 # Isso garante que o processo da aplicação tenha permissão para ler seus próprios arquivos.
 RUN chown -R django:django /app

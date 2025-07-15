@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from utils.model_validators import validate_png
 from utils.images import resize_image
 
@@ -42,6 +43,13 @@ class SiteSetup(models.Model):
     )
 
     def save(self, *args, **kwargs):
+
+        print("-" * 50)
+        print(f"DEBUG: Iniciando o save() do SiteSetup.")
+        print(
+            f"DEBUG: O valor de settings.MEDIA_ROOT é: {settings.MEDIA_ROOT}")
+        print("-" * 50)
+
         # 1. Guarda o estado original do objeto ANTES de salvar
         # Se self.pk não existe, é um objeto novo.
         if self.pk:

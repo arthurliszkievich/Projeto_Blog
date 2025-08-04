@@ -228,10 +228,20 @@ html,
 }
 
 /* Header */
+
+.header{
+  margin-inline: auto;
+}
+
 .blog-title,
 .blog-description {
   margin: 0;
 }
+
+.section-wrapper {
+  width: 100%;
+}
+
 
 /* Menu */
 .menu-items,

@@ -10,7 +10,9 @@ class SiteSetupMiddleware:
 
         # Busca a primeira (e única) instância de SiteSetup
         # Usamos o .first() para não dar erro se a tabela estiver vazia
+        print('--- MIDDLEWARE EXECUTADO! ---')
         setup = SiteSetup.objects.first()
+        print(f'--- Middleware encontrou: {setup} ---')
 
         # Anexa o objeto de setup ao objeto request
         request.site_setup = setup

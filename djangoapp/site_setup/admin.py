@@ -15,6 +15,7 @@ class MenuLinkInline(admin.TabularInline):
     extra = 1
     verbose_name = 'Menu Link'
     verbose_name_plural = 'Menu Links'
+    fields = ('text', 'url_or_path', 'new_tab')
 
 
 @admin.register(SiteSetup)

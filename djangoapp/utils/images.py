@@ -1,7 +1,7 @@
 from pathlib import Path
 import os
 from django.conf import settings
-from PIL import Image
+from PIL import Image  # type: ignore
 
 
 def resize_image(image_django, new_width=800, optimize=True, quality=60):
@@ -34,7 +34,7 @@ def resize_image(image_django, new_width=800, optimize=True, quality=60):
             }
             # O parâmetro 'quality' é mais relevante para JPEGs
             if img.format and img.format.lower() in ['jpeg', 'jpg']:
-                save_kwargs['quality'] = quality
+                save_kwargs['quality'] = quality  # type: ignore
                 # Melhora o carregamento em navegadores
                 save_kwargs['progressive'] = True
 

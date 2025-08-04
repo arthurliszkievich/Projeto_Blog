@@ -96,10 +96,20 @@ class Page(models.Model):
         return self.title
 
 
+class PostManager(models.Manager):
+    def get_published(self):
+        return self.filter(is_published=True).order_by('-pk')
+
+    def latest(self):  # type: ignore
+        return self.published()[:5]
+
+
 class Post(models.Model):
     class Meta:
         verbose_name = 'Post'
         verbose_name_plural = 'Posts'
+
+    objects = PostManager()
 
     title = models.CharField(max_length=60)
     slug = models.SlugField(

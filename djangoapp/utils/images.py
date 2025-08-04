@@ -26,7 +26,8 @@ def resize_image(image_django, new_width=800, optimize=True, quality=60):
             new_height = round(new_width * original_height / original_width)
 
             # Redimensiona a imagem com o filtro LANCZOS de alta qualidade
-            new_image = img.resize((new_width, new_height), Image.LANCZOS)
+            new_image = img.resize(
+                (new_width, new_height), Image.LANCZOS)  # type: ignore
 
             # Prepara os argumentos para salvar, dependendo do formato
             save_kwargs = {
@@ -41,7 +42,7 @@ def resize_image(image_django, new_width=800, optimize=True, quality=60):
             # Salva a imagem no mesmo caminho, sobrescrevendo a original
             new_image.save(
                 image_path,
-                **save_kwargs
+                **save_kwargs  # type: ignore
             )
 
             return new_image

@@ -56,3 +56,35 @@ class Category(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(
         max_length=100, unique=True, blank=True)
+
+    def __str__(self) -> str:
+        return self.name
+
+
+class Page(models.Model):
+    title = models.CharField(max_length=65)
+    slug = models.SlugField(
+        max_length=100, unique=True, blank=True)
+
+    is_published = models.BooleanField(
+        default=False, help_text=('Este campo precisa estar marcado para a página ser exibida no site.')
+    )
+    content = models.TextField()
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+
+        # A lógica de unicidade pode ser exatamente a mesma
+        original_slug = self.slug
+        queryset = self.__class__.objects.filter(
+            slug=self.slug
+        ).exclude(pk=self.pk)
+
+        if queryset.exists():
+            self.slug = f'{original_slug}-{random_slug(k=4)}'
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.title

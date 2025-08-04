@@ -1,5 +1,9 @@
 from django.db import models
 from utils.rands import slugify, random_slug
+from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class Tag(models.Model):
@@ -84,6 +88,56 @@ class Page(models.Model):
         if queryset.exists():
             self.slug = f'{original_slug}-{random_slug(k=4)}'
 
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.title
+
+
+class Post(models.Model):
+    class Meta:
+        verbose_name = 'Post'
+        verbose_name_plural = 'Posts'
+
+    title = models.CharField(max_length=60)
+    slug = models.SlugField(
+        max_length=100, unique=True, blank=True)
+    excerpt = models.CharField(max_length=150)
+    is_published = models.BooleanField(
+        default=False, help_text=('Este campo precisa estar marcado para a página ser exibida no site.')
+    )
+    content = models.TextField()
+    cover = models.ImageField(upload_to='posts/%Y/%m/', blank=True, default='')
+    cover_in_post_content = models.BooleanField(
+        default=False, help_text=('Se marcado, a imagem de capa será exibida no conteúdo do post')
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_by')
+    updated_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='updated_by')
+    # Relacionamento muitos-para-muitos com Tag
+    tags = models.ManyToManyField(Tag, blank=True)
+    category = models.ForeignKey(
+        Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='posts')
+
+    def save(self, *args, **kwargs):
+        # Se o slug não foi preenchido
+        if not self.slug:
+            # Gera o slug a partir do campo 'title'
+            self.slug = slugify(self.title)
+
+            # Lógica para garantir unicidade (exatamente como nos outros models)
+            original_slug = self.slug
+            queryset = self.__class__.objects.filter(
+                slug=self.slug
+            ).exclude(pk=self.pk)
+
+            if queryset.exists():
+                self.slug = f'{original_slug}-{random_slug(k=4)}'
+
+        # Salva no banco de dados
         super().save(*args, **kwargs)
 
     def __str__(self):

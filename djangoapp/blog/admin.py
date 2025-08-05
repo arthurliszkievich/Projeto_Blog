@@ -53,6 +53,7 @@ class PostAdmin(SummernoteModelAdmin):
     prepopulated_fields = {
         "slug": ('title',),
     }
+    autocomplete_fields = 'tags', 'category',
     raw_id_fields = ('category',)
     filter_horizontal = ('tags',)
 

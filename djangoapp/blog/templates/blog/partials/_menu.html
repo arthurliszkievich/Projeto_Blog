@@ -1,0 +1,12 @@
+<!-- djangoapp/blog/templates/blog/partials/_menu.html -->
+<nav class="menu">
+  <ul class="menu-items">
+    {% for link in site_setup.menulink_set.all %}
+      <li class="menu-item">
+        <a href="{{ link.url_or_path }}" {% if link.new_tab %}target="_blank"{% endif %}>
+          {{ link.text }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</nav>

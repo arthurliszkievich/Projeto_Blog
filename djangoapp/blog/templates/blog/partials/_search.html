@@ -1,0 +1,20 @@
+<!-- djangoapp/blog/templates/blog/partials/_search.html -->
+<div class="search">
+  <form
+    class="search-content"
+    action="{% url 'blog:search' %}"
+    method="GET"
+  >
+    <input
+      class="search-input"
+      type="search"
+      name="q"
+      value="{{ search_value }}"
+      placeholder="Busque aqui..."
+      required
+    >
+    <button class="search-btn" type="submit">
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </button>
+  </form>
+</div>

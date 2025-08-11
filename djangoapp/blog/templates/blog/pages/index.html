@@ -4,18 +4,28 @@
 <main class="main-content section-wrapper">
   <div class="section-content-wide">
     <div class="section-gap">
-      {% if page_obj %}
+      
+      {# Exibe um título na página se a view fornecer um #}
+      {% if page_main_title %}
+        <div class="page-header">
+          <h2 class="page-title">{{ page_main_title }}</h2>
+        </div>
+      {% endif %}
+
+      {% if page_obj.object_list %}
         <div class="card-grid">
           {% for post in page_obj %}
-            {% include 'blog/partials/_post-card.html' with post=post i=forloop.counter0 %}
+            {% if post.slug %}
+              {% include 'blog/partials/_post-card.html' with post=post i=forloop.counter0 %}
+            {% endif %}
           {% endfor %}
         </div>
       {% else %}
         <div class="not-found center">
           <h1>Nada encontrado 😔</h1>
           <p>
-            Não encontrei nada nesse link, por favor, clique em outro
-            link do nosso blog ou vá para a
+            Não encontrei nada para "{{ page_main_title | default:'sua busca' }}",
+            por favor, tente novamente ou vá para a
             <a href="{% url 'blog:index' %}">Home</a>.
           </p>
         </div>

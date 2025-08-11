@@ -1,41 +1,20 @@
-<header class="header section-wrapper">
-  <div class="section-content-wide">
-    <div class="section-gap">
+<!-- djangoapp/blog/templates/blog/partials/_header.html -->
+<header class="header section-gap">
+  <div class="container section-content-wide">
 
-      <h1 class="blog-title center pb-base">
-        <a class="blog-link" href="/"> {{ site_setup.title }} </a>
-      </h1>
+    <h1 class="blog-title">
+      <a href="{% url 'blog:index' %}">{{ site_setup.title }}</a>
+    </h1>
 
-      <p class="blog-description pb-base center">
-        {{ site_setup.description }}
-      </p>
+    <p class="blog-description">{{ site_setup.description }}</p>
 
-      <div class="search pb-base center">
-        <form class="search-form" action="#" method="get">
-          <div class="search-content">
-            <label class="sr-only" id="search-label" for="search-input">Search</label>
-            <input class="search-input" type="search" name="search" id="search-input" placeholder="Search"
-              value="Non risu potius quam oratione eiciendum? Quo pleb ">
-            <button class="search-btn" type="submit" aria-labelledby="search-label">
-              <i class="fa fa-search"></i>
-            </button>
-          </div>
-        </form>
-      </div>
+    {% if site_setup.show_search %}
+      {% include 'blog/partials/_search.html' %}
+    {% endif %}
 
-      <!-- VERIFICA SE O MENU DEVE SER EXIBIDO E SE EXISTEM LINKS -->
-      {% if site_setup.show_menu and site_setup.menu_links.all %}
-      <div class="menu">
-        <ul class="menu-items">
-          {% for link in site_setup.menu_links.all %}
-          <li class="menu-item">
-            <a class="menu-link" href="{{ link.url_or_path }}" {% if link.new_tab %} target="_blank" {% endif %}>{{ link.text }}</a>
-          </li>
-          {% endfor %}
-        </ul>
-      </div>
-      {% endif %}
+    {% if site_setup.show_menu %}
+      {% include 'blog/partials/_menu.html' %}
+    {% endif %}
 
-    </div>
   </div>
 </header>

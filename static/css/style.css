@@ -159,9 +159,14 @@ input[type='search']::-webkit-search-results-decoration {
 /* Blog */
 
 img {
-  max-width: 100%;
-  height: auto;
-  display: block;
+ margin: 0 auto;
+}
+
+/* CodeMirror */
+.CodeMirror {
+  height: auto !important;
+  border: 1px solid hsl(var(--clr-gray-ltst));
+  font-size: var(--fs-sm);
 }
 
 body,

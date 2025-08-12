@@ -1,10 +1,14 @@
+from site_setup.models import SiteSetup
+
+
 def site_setup(request):
-    print('--- CONTEXT PROCESSOR EXECUTADO! ---')
-    # Usamos getattr para não dar erro caso o atributo não exista
-    data = getattr(request, 'site_setup', 'ATRIBUTO NAO ENCONTRADO')
-    print(f'--- Context processor recebeu: {data} ---')
-    # ----------------------------------------
+    """
+    Este context processor busca o objeto de configuração do site
+    e o adiciona ao contexto de todos os templates.
+    """
+    # Busca o primeiro (e único) objeto SiteSetup do banco de dados
+    setup = SiteSetup.objects.first()
 
     return {
-        'site_setup': request.site_setup
+        'site_setup': setup,
     }

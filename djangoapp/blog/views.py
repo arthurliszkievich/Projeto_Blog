@@ -1,177 +1,139 @@
 # djangoapp/blog/views.py
 
 from django.contrib.auth import get_user_model
-from django.core.paginator import Paginator
 from django.db.models import Q
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Post, Page, Category, Tag
-from site_setup.models import SiteSetup
+from django.shortcuts import get_object_or_404
+from django.views.generic import ListView, DetailView
+from .models import Page, Post, Category, Tag
 
 User = get_user_model()
 
 
-def index(request):
+# O SiteSetupMixin foi removido, pois o Context Processor cuidará disso.
+
+class PostListViewBase(ListView):  # <- Herança de SiteSetupMixin removida
     """
-    View para a página inicial, que lista todos os posts publicados.
+    Classe base para todas as listagens de posts.
+    Ela configura o modelo, template, paginação e o queryset base.
     """
-    # A consulta foi movida para DENTRO da view.
-    posts = Post.objects.get_published()
-    site_setup = SiteSetup.objects.first()
+    model = Post
+    template_name = 'blog/pages/index.html'
+    context_object_name = 'page_obj'
+    paginate_by = 9
 
-    # Ajustado para 9 para um grid 3x3, por exemplo
-    paginator = Paginator(posts, 9)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    context = {
-        'page_obj': page_obj,
-        'site_setup': site_setup,
-    }
-
-    return render(request, 'blog/pages/index.html', context)
+    def get_queryset(self):
+        """
+        Define o queryset base para todas as listagens.
+        """
+        return self.model.objects.get_published()
 
 
-def category(request, slug):
-    """
-    View para listar todos os posts publicados de uma categoria específica.
-    """
-    # Encontra a categoria pelo slug. Se não existir, retorna erro 404.
-    # Usamos .get(slug=slug) porque o slug da categoria é único.
-    category_obj = get_object_or_404(Category, slug=slug)
-    site_setup = SiteSetup.objects.first()
-
-    # Filtra os posts que pertencem à categoria E estão publicados.
-    # O Django permite filtrar diretamente pelo objeto da chave estrangeira.
-    posts = Post.objects.get_published().filter(category=category_obj)
-
-    paginator = Paginator(posts, 9)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    context = {
-        'page_obj': page_obj,
-        'site_setup': site_setup,
-        'page_title': f'Categoria: {category_obj.name} - ',
-        'page_main_title': f'Categoria: "{category_obj.name}"',
-    }
-
-    # Reutilizamos o template index.html, que já sabe listar e paginar posts.
-    return render(request, 'blog/pages/index.html', context)
+class IndexView(PostListViewBase):  # Herda diretamente de ListView
+    pass
 
 
-def page(request, slug):
-    """
-    View para exibir uma única Página estática (como 'Sobre' ou 'Contato').
-    """
-    # Esta view busca um objeto 'Page', não um 'Post'.
-    page_obj = get_object_or_404(Page, slug=slug, is_published=True)
-    site_setup = SiteSetup.objects.first()
+class CategoryView(PostListViewBase):
+    """View para listar posts de uma categoria."""
 
-    context = {
-        'page': page_obj,
-        'site_setup': site_setup,
-        'page_title': f"{page_obj.title} - ",
-    }
+    def get_queryset(self):
+        qs = super().get_queryset()
+        self.category = get_object_or_404(
+            Category, slug=self.kwargs.get('slug'))
+        return qs.filter(category=self.category)
 
-    return render(request, 'blog/pages/page.html', context)
-
-
-def post(request, slug):
-    """
-    View para exibir um único Post do blog.
-    """
-    post_obj = get_object_or_404(Post.objects.get_published(), slug=slug)
-    site_setup = SiteSetup.objects.first()
-
-    context = {
-        'post': post_obj,
-        'site_setup': site_setup,
-        'page_title': f"{post_obj.title} - ",
-    }
-
-    return render(request, 'blog/pages/post.html', context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = f'Categoria: {self.category.name} - '
+        context['page_main_title'] = f'Categoria: "{self.category.name}"'
+        return context
 
 
-def created_by(request, id):
-    author = get_object_or_404(User, pk=id)
-    site_setup = SiteSetup.objects.first()
-    posts = Post.objects.get_published().filter(created_by=author)
-    paginator = Paginator(posts, 9)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+class TagView(PostListViewBase):
+    """View para listar posts de uma tag."""
 
-    # NOME COMPLETO DO AUTOR
-    author_full_name = author.get_full_name()
-    if not author_full_name:
-        author_full_name = author.username
+    def get_queryset(self):
+        qs = super().get_queryset()
+        self.tag = get_object_or_404(Tag, slug=self.kwargs.get('slug'))
+        return qs.filter(tags=self.tag)
 
-    context = {
-        'page_obj': page_obj,
-        'site_setup': site_setup,
-        # Título para a aba do navegador
-        'page_title': f'Posts de {author_full_name} - ',
-        # Título para ser exibido no conteúdo da página
-        'page_main_title': f'Posts de "{author_full_name}"',
-    }
-
-    return render(request, 'blog/pages/index.html', context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = f'Tag: {self.tag.name} - '
+        context['page_main_title'] = f'Tag: "{self.tag.name}"'
+        return context
 
 
-def search(request):
-    """
-    View para a página de resultados de busca.
-    """
-    search_value = request.GET.get('q', '').strip()
+class CreatedByView(PostListViewBase):
+    """View para listar posts de um autor."""
 
-    # Se a busca for vazia, redirecionamos para a página inicial.
-    if not search_value:
-        return redirect('blog:index')
+    def get_queryset(self):
+        qs = super().get_queryset()
+        self.author = get_object_or_404(User, pk=self.kwargs.get('id'))
+        return qs.filter(created_by=self.author)
 
-    # A consulta agora é feita aqui dentro.
-    posts = Post.objects.get_published().filter(
-        Q(title__icontains=search_value) |
-        Q(excerpt__icontains=search_value)
-    ).order_by('-pk')  # Ordena pelos mais recentes
-
-    site_setup = SiteSetup.objects.first()
-
-    paginator = Paginator(posts, 9)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    context = {
-        'page_obj': page_obj,
-        'site_setup': site_setup,
-        'search_value': search_value,
-        'page_title': f'Busca: "{search_value}" - ',
-    }
-
-    return render(request, 'blog/pages/index.html', context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        author_full_name = self.author.get_full_name() or self.author.username
+        context['page_title'] = f'Posts de {author_full_name} - '
+        context['page_main_title'] = f'Posts de "{author_full_name}"'
+        return context
 
 
-def tag(request, slug):
-    """
-    View para listar todos os posts publicados de uma tag específica.
-    """
-    # Encontra a tag pelo slug. Se não existir, retorna erro 404.
-    # Usamos .get(slug=slug) porque o slug da tag é único.
-    tag_obj = get_object_or_404(Tag, slug=slug)
-    site_setup = SiteSetup.objects.first()
+class SearchView(PostListViewBase):
+    """View para a página de busca."""
 
-    # Filtra os posts que pertencem à tag E estão publicados.
-    # O Django permite filtrar diretamente pelo objeto da chave estrangeira.
-    posts = Post.objects.get_published().filter(tags=tag_obj)
+    def get_queryset(self):
+        qs = super().get_queryset()
+        self.search_value = self.request.GET.get('q', '').strip()
 
-    paginator = Paginator(posts, 9)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+        if not self.search_value:
+            return qs.none()
 
-    context = {
-        'page_obj': page_obj,
-        'site_setup': site_setup,
-        'page_title': f'Tag: {tag_obj.name} - ',
-        'page_main_title': f'Tag: "{tag_obj.name}"',
-    }
+        return qs.filter(
+            Q(title__icontains=self.search_value) |
+            Q(excerpt__icontains=self.search_value) |
+            Q(content__icontains=self.search_value)
+        )
 
-    # Reutilizamos o template index.html, que já sabe listar e paginar posts.
-    return render(request, 'blog/pages/index.html', context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search_value'] = self.search_value
+        context['page_title'] = f'Busca: "{self.search_value}" - '
+        context['page_main_title'] = f'Busca por "{self.search_value}"'
+        return context
+
+
+class PageDetailView(DetailView):  # <- Herança de SiteSetupMixin removida
+    """View para a página de detalhe de uma Página estática."""
+    model = Page
+    template_name = 'blog/pages/page.html'
+    context_object_name = 'page'
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
+
+    def get_queryset(self):
+        return super().get_queryset().filter(is_published=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        page = self.get_object()
+        context['page_title'] = f'{page.title} - '
+        return context
+
+
+class PostDetailView(DetailView):  # <- Herança de SiteSetupMixin removida
+    """View para a página de detalhe de um Post."""
+    model = Post
+    template_name = 'blog/pages/post.html'
+    context_object_name = 'post'
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
+
+    def get_queryset(self):
+        return Post.objects.get_published()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post = self.get_object()
+        context['page_title'] = f'{post.title} - '
+        return context

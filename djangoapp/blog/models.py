@@ -130,6 +130,30 @@ class Category(models.Model):
         return self.name
 
 
+def get_absolute_url(self):
+    """
+    Retorna a URL canônica para o post.
+
+    Este método é usado pelo Django para gerar URLs para o objeto.
+    É especialmente útil em templates e para SEO.
+
+    Returns:
+        str: URL do post se publicado e com slug, senão URL da página inicial
+
+    Logic:
+        - Se o post não está publicado OU não tem slug: retorna página inicial
+        - Se o post está publicado E tem slug: retorna URL específica do post
+    """
+    # Se o post NÃO tem um slug (ou seja, ainda não foi salvo),
+    # ou se ele simplesmente não está publicado, não podemos (ou não queremos)
+    # apontar para sua página de detalhe.
+    # Nesse caso, podemos retornar para a página inicial do blog.
+    if not self.is_published or not self.slug:
+        return reverse('blog:index')
+    # Se ele está publicado e tem um slug, retornamos a URL correta.
+    return reverse('blog:page', args=(self.slug,))
+
+
 class Page(models.Model):
     """
     Modelo para representar páginas estáticas do site.

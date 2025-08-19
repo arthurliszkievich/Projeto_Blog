@@ -9,3 +9,5 @@ gunicorn
 python-decouple
 whitenoise
 pillow
+python-dotenv>=1.1.1,<1.2
+django-axes>=8.0.0,<8.1

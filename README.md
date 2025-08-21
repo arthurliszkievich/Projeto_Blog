@@ -1,7 +1,3 @@
-Claro! Com base em todo o trabalho que fizemos e nas funcionalidades do seu projeto, preparei um README.md completo e profissional para você.
-
-Este arquivo é escrito em Markdown. Você pode simplesmente copiar e colar o conteúdo abaixo em um arquivo chamado README.md na raiz do seu projeto.
-
 Projeto_Blog: Uma Plataforma de Blog Completa com Django
 
 Este é um projeto de blog full-stack desenvolvido com Django e containerizado com Docker. A aplicação permite que usuários criem, editem, gerenciem e publiquem posts de forma segura e intuitiva, contando com um editor de texto avançado, sistema de rascunhos, categorias, tags e muito more.

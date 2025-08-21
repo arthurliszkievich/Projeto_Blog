@@ -1,20 +1,47 @@
-<!-- djangoapp/blog/templates/blog/partials/_header.html -->
-<header class="header section-gap">
-  <div class="container section-content-wide">
+<header class="header section-wrapper">
+  <div class="header-content section-content-wide">
 
-    <h1 class="blog-title">
-      <a href="{% url 'blog:index' %}">{{ site_setup.title }}</a>
-    </h1>
+    {# Coluna da Esquerda: Título do Blog (Sempre visível) #}
+    <div class="header-blog-info">
+      <a class="header-blog-title" href="{% url 'blog:index' %}">
+        <h1 class="blog-title">{{ site_setup.title }}</h1>
+      </a>
+      {# A descrição só aparece se não estivermos em uma 'simple_header_page' #}
+      {% if not simple_header_page %}
+        <p class="blog-description">{{ site_setup.description }}</p>
+      {% endif %}
+    </div>
+    {% if not simple_header_page %}
+    
+      {# Coluna do Meio: Barra de Busca #}
+      <div class="header-search">
+        {% include 'blog/partials/_search.html' %}
+      </div>
 
-    <p class="blog-description">{{ site_setup.description }}</p>
+      {# Coluna da Direita: Navegação e Ações do Usuário #}
+      <nav class="header-nav">
+        <ul class="menu-items">
+          {% if user.is_authenticated %}
+            <li class="menu-item"><a href="{% url 'blog:post_drafts' %}">Meus Rascunhos</a></li>
+            <li class="menu-item"><a href="{% url 'blog:post_create' %}" class="nav-button">Criar Post</a></li>
+            {# Adicionamos a nova classe CSS ao botão Sair #}
+            <li class="menu-item"><a href="{% url 'blog:logout' %}" class="nav-button-secondary">Sair</a></li>
+          {% else %}
+            <li class="menu-item"><a href="{% url 'blog:login' %}">Entrar</a></li>
+          {% endif %}
+        </ul>
+      </nav>
 
-    {% if site_setup.show_search %}
-      {% include 'blog/partials/_search.html' %}
+    {% else %}
+      <nav class="header-nav">
+        <ul class="menu-items">
+          {% if user.is_authenticated %}
+            <li class="menu-item"><a href="{% url 'blog:logout' %}" class="nav-button-secondary">Sair</a></li>
+          {% endif %}
+        </ul>
+      </nav>
     {% endif %}
-
-    {% if site_setup.show_menu %}
-      {% include 'blog/partials/_menu.html' %}
-    {% endif %}
+  
 
   </div>
 </header>

@@ -27,7 +27,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 WORKDIR /app
 
 # Copia apenas o arquivo de requisitos primeiro para aproveitar o cache do Docker.
-COPY ./djangoapp/requirements.txt .
+COPY requirements.txt .
 
 # Instala as dependências Python.
 RUN pip install --no-cache-dir -r requirements.txt

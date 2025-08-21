@@ -1,7 +1,26 @@
-/*
-!/djangoapp
-!/static
-!/entrypoint.prod.sh
-!/.env
-!/Dockerfile
-!/docker-compose.yml
+# .dockerignore
+
+# Ignorar arquivos do Git
+.git
+.gitignore
+
+# Ignorar arquivos de ambiente Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.venv/
+
+# Ignorar arquivos de configuração do editor
+.vscode/
+
+# Ignorar arquivos de dependências do Node (se você usar)
+node_modules/
+
+# Ignorar arquivos de mídia e estáticos gerados (eles são gerenciados por volumes)
+media/
+staticfiles/
+
+# Ignorar o banco de dados local (se você usar sqlite para testes)
+db.sqlite3

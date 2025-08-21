@@ -21,9 +21,6 @@ services:
     volumes:
       # 1. Mapeia o código da sua aplicação
       - ./djangoapp:/app
-      
-      # 2. Mapeia seu arquivo de configuração
-      - ./djangoapp:/app
 
       # 3. Mapeia a pasta de uploads
       # Cria uma pasta 'media' na raiz do seu projeto local.

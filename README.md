@@ -144,5 +144,3 @@ IGNORE_WHEN_COPYING_END
     ├── blog/              # A app principal do blog (models, views, etc.)
     ├── project/           # Configurações do projeto Django (settings.py, urls.py)
     └── manage.py          # Utilitário de linha de comando do Django
-
-Parabéns por desenvolver um projeto tão completo

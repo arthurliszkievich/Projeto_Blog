@@ -138,6 +138,18 @@ MIGRATION_MODULES = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# LOGOUT AUTOMÁTICO POR INATIVIDADE
+
+# Tempo de vida do cookie da sessão em segundos.
+# Ex: 1800 segundos = 30 minutos de inatividade.
+SESSION_COOKIE_AGE = 1800
+
+# Salva a sessão a cada requisição. Isso "reseta" o contador de inatividade
+# toda vez que o usuário clica em algo. O logout só ocorrerá se ele
+# ficar o tempo acima sem fazer NADA.
+SESSION_SAVE_EVERY_REQUEST = True
+
+
 AUTHENTICATION_BACKENDS = [
     # AxesStandaloneBackend should be the first backend in the AUTHENTICATION_BACKENDS list.
     'axes.backends.AxesStandaloneBackend',

@@ -1,88 +1,126 @@
-Projeto_Blog: Uma Plataforma de Blog Completa com Django
+Projeto_Blog (Django)
 
-Este é um projeto de blog full-stack desenvolvido com Django e containerizado com Docker. A aplicação permite que usuários criem, editem, gerenciem e publiquem posts de forma segura e intuitiva, contando com um editor de texto avançado, sistema de rascunhos, categorias, tags e muito more.
+![alt text](https://img.shields.io/badge/Django%205.2-092E20?style=for-the-badge&logo=django&logoColor=white)
+![alt text](https://img.shields.io/badge/Python%203.10-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![alt text](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![alt text](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![alt text](https://img.shields.io/badge/Gunicorn-499848?style=for-the-badge&logo=gunicorn&logoColor=white)
 
-![alt text](https://github.com/arthurbleich/Projeto_Blog/assets/101886835/9564f331-50e5-47e9-a764-a74578b94f1c)
+Uma plataforma de blog completa e robusta desenvolvida com Django e totalmente containerizada com Docker. Permite aos usuários criar, editar, gerenciar e publicar posts de forma segura e intuitiva, com sistema de rascunhos, editor de texto avançado, categorias, tags e muito mais.
 
-✨ Features
+Status: Em processo
+
+Funcionalidades Principais
+
+Autenticação de Usuários: Sistema seguro de Login e Logout.
 
 Gerenciamento Completo de Posts (CRUD): Crie, visualize, atualize e exclua posts.
 
-Autenticação de Usuários: Sistema seguro de login e logout.
+Sistema de Rascunhos e Publicação: Salve posts como rascunhos e publique-os quando estiverem prontos. Apenas o autor pode visualizar e gerenciar seus próprios rascunhos.
 
-Sistema de Rascunhos e Publicação: Salve posts como rascunhos e publique-os quando estiverem prontos. Apenas o autor pode visualizar seus próprios rascunhos.
-
-Editor de Texto Avançado (WYSIWYG): Integrado com django-summernote para permitir formatação de texto, inclusão de links e upload de imagens diretamente no corpo do post.
-
-Upload de Imagens: Suporte para imagem de capa e imagens no conteúdo.
+Editor de Texto Avançado (WYSIWYG): Integração com django-summernote para formatação de texto, inclusão de links e upload de imagens diretamente no corpo do post.
 
 Organização de Conteúdo: Sistema de Categorias e Tags para classificar os posts.
 
-Geração Automática de Slugs: URLs amigáveis são geradas automaticamente a partir dos títulos, com suporte a caracteres especiais (ex: "Programação" → programacao).
+Geração Automática de Slugs: URLs amigáveis (/post/meu-primeiro-post) são geradas automaticamente a partir dos títulos, com tratamento para caracteres especiais.
 
-Funcionalidade de Busca: Pesquise posts por título, resumo ou conteúdo.
+Busca: Pesquisa de posts por título, resumo ou conteúdo.
 
-Paginação: Navegue facilmente por listas longas de posts.
+Paginação: Navegação otimizada para listas de posts.
 
-Segurança: Apenas o autor de um post pode editá-lo ou excluí-lo.
+Segurança:
 
-Logout Automático: A sessão do usuário expira após um período de inatividade, aumentando a segurança.
+Apenas o autor de um post pode editá-lo ou excluí-lo.
 
-Ambiente Containerizado: O projeto é totalmente configurado para rodar com Docker e Docker Compose, garantindo um setup de desenvolvimento rápido e consistente.
+Logout automático após período de inatividade.
 
-🛠️ Tecnologias Utilizadas
+Proteção contra brute-force com django-axes.
 
-Backend: Python, Django
+Ambiente de Desenvolvimento Otimizado: O projeto é 100% containerizado com Docker, garantindo um setup rápido, consistente e isolado.
 
-Frontend: HTML, CSS (com Variáveis CSS para fácil customização)
+Tecnologias Utilizadas
+
+Backend: Python 3.10, Django 5.2
 
 Banco de Dados: PostgreSQL (rodando em um container Docker)
 
-Editor de Texto: django-summernote
-
 Containerização: Docker, Docker Compose
 
-Servidor de Produção: Gunicorn
+Servidor WSGI: Gunicorn (utilizado no Dockerfile para prontidão de produção)
 
-🚀 Configuração do Ambiente Local
+Frontend: HTML, CSS (com Variáveis CSS para fácil customização)
 
-Para rodar este projeto localmente, você precisará ter o Docker e o Docker Compose instalados.
+Bibliotecas Principais:
 
-1. Clone o Repositório
+django-summernote: Editor de texto avançado (WYSIWYG).
+
+Pillow: Manipulação e processamento de imagens.
+
+python-dotenv: Gerenciamento de variáveis de ambiente.
+
+unidecode: Tratamento de caracteres especiais para a geração de slugs.
+
+django-axes: Segurança para controle de acesso e tentativas de login.
+
+Pré-requisitos
+
+Docker instalado
+
+Docker Compose instalado
+
+Configuração do Ambiente de Desenvolvimento
+
+Siga os passos abaixo para configurar e rodar o projeto localmente usando Docker.
+
+Clone o Repositório:
+
 code
 Bash
 download
 content_copy
 expand_less
 
-git clone https://github.com/SEU_USUARIO/Projeto_Blog.git
+git clone https://github.com/arthurbleich/Projeto_Blog.git
 cd Projeto_Blog
-2. Crie o Arquivo de Variáveis de Ambiente
 
-O projeto utiliza um arquivo .env para gerenciar as configurações sensíveis. Crie um arquivo chamado .env na raiz do projeto e adicione o seguinte conteúdo. Substitua os valores conforme necessário.
+Crie o Arquivo de Variáveis de Ambiente:
+
+Crie um arquivo chamado .env na raiz do projeto.
+
+IMPORTANTE: O arquivo .gitignore já está configurado para ignorar o .env.
+
+Adicione as seguintes variáveis, substituindo pelos seus valores:
 
 code
-Env
+Dotenv
 download
 content_copy
 expand_less
 IGNORE_WHEN_COPYING_START
 IGNORE_WHEN_COPYING_END
-# Configurações do Banco de Dados PostgreSQL
-POSTGRES_USER=myuser
-POSTGRES_PASSWORD=mypassword
-POSTGRES_DB=mydb
-
-# Chave Secreta do Django (IMPORTANTE: Gere uma nova chave)
-# Você pode gerar uma usando o comando: python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'
-SECRET_KEY='sua_chave_secreta_aqui'
-
-# Configurações do Django
+# .env
+SECRET_KEY='sua_chave_secreta_super_segura_aqui'
 DEBUG=True
 ALLOWED_HOSTS=localhost 127.0.0.1
-3. Construa os Containers e Inicie a Aplicação
 
-Com o Docker em execução, execute o seguinte comando na raiz do projeto. Ele irá construir as imagens, baixar o PostgreSQL e iniciar todos os serviços.
+# Configurações do Banco de Dados PostgreSQL (usadas pelo docker-compose)
+POSTGRES_USER=blog_user
+POSTGRES_PASSWORD=senha_super_forte
+POSTGRES_DB=blog_db
+
+Para gerar uma SECRET_KEY segura, você pode usar o seguinte comando Python:
+
+code
+Bash
+download
+content_copy
+expand_less
+IGNORE_WHEN_COPYING_START
+IGNORE_WHEN_COPYING_END
+python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'
+
+Construa os Containers e Inicie a Aplicação:
+Este comando irá construir a imagem do Django, baixar a imagem do PostgreSQL e iniciar todos os serviços em segundo plano.
 
 code
 Bash
@@ -92,9 +130,9 @@ expand_less
 IGNORE_WHEN_COPYING_START
 IGNORE_WHEN_COPYING_END
 docker-compose up --build -d
-4. Aplique as Migrações do Banco de Dados
 
-Com os containers rodando, aplique as migrações para criar as tabelas no banco de dados.
+Execute as Migrações do Banco de Dados:
+Com os containers rodando, execute o comando abaixo para criar as tabelas no banco de dados.
 
 code
 Bash
@@ -104,9 +142,9 @@ expand_less
 IGNORE_WHEN_COPYING_START
 IGNORE_WHEN_COPYING_END
 docker-compose exec djangoapp python manage.py migrate
-5. Crie um Superusuário
 
-Para acessar a área administrativa, crie um superusuário.
+Crie um Superusuário:
+Para acessar a área administrativa do Django (/admin/), crie um superusuário:
 
 code
 Bash
@@ -117,30 +155,43 @@ IGNORE_WHEN_COPYING_START
 IGNORE_WHEN_COPYING_END
 docker-compose exec djangoapp python manage.py createsuperuser
 
-Siga as instruções no terminal para definir um nome de usuário, email e senha.
+Siga as instruções no terminal para definir seu nome de usuário, email e senha.
 
-💻 Uso da Aplicação
+Executando a Aplicação
 
-Acessar o Blog: Abra seu navegador e acesse http://localhost:8000
+Se os containers não estiverem rodando, inicie-os com:
 
-Acessar a Área Administrativa: Acesse http://localhost:8000/admin/ e faça login com o superusuário que você criou.
-
-A partir daí, você pode usar o botão "Criar Post" para começar a publicar seu conteúdo!
-
-📁 Estrutura do Projeto
 code
-Code
+Bash
 download
 content_copy
 expand_less
 IGNORE_WHEN_COPYING_START
 IGNORE_WHEN_COPYING_END
-.
-├── docker-compose.yml     # Orquestra os containers
-├── Dockerfile             # Define a imagem do container da aplicação Django
-├── requirements.txt       # Lista de dependências Python
-├── .env                   # Arquivo de variáveis de ambiente (local)
-└── djangoapp/             # Diretório contendo todo o código-fonte do Django
-    ├── blog/              # A app principal do blog (models, views, etc.)
-    ├── project/           # Configurações do projeto Django (settings.py, urls.py)
-    └── manage.py          # Utilitário de linha de comando do Django
+docker-compose up -d
+
+Acesse o Blog: http://localhost:8000/
+
+Acesse a Área Administrativa: http://localhost:8000/admin/
+
+Deploy (Produção)
+
+O Dockerfile deste projeto já está otimizado para produção, utilizando um multi-stage build para criar uma imagem final leve e segura. O servidor de aplicação utilizado é o Gunicorn.
+
+Para um deploy real, os passos adicionais tipicamente envolvem:
+
+Configurar um servidor (Ex: VPS na DigitalOcean, AWS EC2).
+
+Configurar o Docker e Docker Compose no servidor.
+
+Ajustar o docker-compose.yml para produção (remover volumes de código, por exemplo).
+
+Configurar um Proxy Reverso como Nginx para servir arquivos estáticos/mídia e direcionar o tráfego para o Gunicorn.
+
+Configurar o firewall (UFW).
+
+Configurar um certificado HTTPS com Certbot (Let's Encrypt).
+
+No settings.py (gerenciado por variáveis de ambiente), definir DEBUG=False e preencher ALLOWED_HOSTS com o domínio real.
+
+Projeto desenvolvido como parte de um estudo aprofundado do framework Django e boas práticas de desenvolvimento web.

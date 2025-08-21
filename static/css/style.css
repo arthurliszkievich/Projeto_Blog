@@ -75,6 +75,7 @@ html {
 }
 
 body {
+  margin: 0;
   background-color: hsl(var(--clr-white));
   color: hsl(var(--clr-black));
   font-size: 20px; /* Fallback value */
@@ -497,3 +498,172 @@ html,
   text-decoration: none;
 }
 
+.header {
+  /* ESTA É A PARTE IMPORTANTE */
+  background: hsl(var(--clr-gray-ltst)); /* Cor de fundo cinza bem claro */
+  padding-block: var(--spacing-smlst); /* Espaçamento vertical interno */
+  
+  /* Mantém o header fixo no topo ao rolar a página */
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header-content {
+  /* Ativa o layout flexível */
+  display: flex;
+  align-items: center; /* Alinha tudo verticalmente */
+  justify-content: space-between; /* Empurra os itens para as pontas */
+  flex-wrap: wrap; /* Permite quebrar linha em telas menores */
+  gap: var(--spacing-base); /* Espaço entre os blocos (título, busca, nav) */
+}
+
+.header-blog-info {
+  /* Impede que o título quebre em duas linhas desnecessariamente */
+  white-space: nowrap;
+}
+
+.header-blog-title {
+  color: inherit; /* Usa a cor padrão do texto */
+}
+
+.header-blog-title:hover {
+  text-decoration: none;
+}
+
+.header-search {
+  /* Permite que a busca cresça para ocupar o espaço do meio */
+  flex-grow: 1; 
+  /* Remove a margem que centralizava a busca quando ela estava sozinha */
+  margin-inline: 0;
+}
+
+/* Removemos a centralização dos 'menu-items' pois o Flexbox já cuida disso */
+.menu-items {
+  justify-content: initial; 
+}
+
+/* Estilo para o botão "Criar Post" */
+.nav-button {
+  background: hsl(var(--clr-primary-base));
+  color: hsl(var(--clr-white));
+  padding: var(--spacing-micro) var(--spacing-smlst);
+  border-radius: var(--br-base);
+  font-weight: bold;
+  white-space: nowrap;
+  transition: background-color 200ms ease-in-out;
+}
+
+.nav-button:hover {
+  background: hsl(var(--clr-primary-dk));
+  color: hsl(var(--clr-white));
+  text-decoration: none;
+} 
+
+
+/* ====================================
+   ESTILOS DO FORMULÁRIO
+   ==================================== */
+
+.form-wrapper {
+  max-width: 65rem;
+  margin-inline: auto;
+}
+
+.form-group {
+  margin-bottom: var(--spacing-sm);
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: var(--spacing-micro);
+  font-weight: bold;
+}
+
+/* Estilo para todos os inputs de texto, select, etc. */
+.form-group input[type='text'],
+.form-group input[type='email'],
+.form-group input[type='password'],
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: var(--spacing-smlst);
+  border: 1px solid hsl(var(--clr-gray-ltr));
+  border-radius: var(--br-base);
+  font-size: var(--fs-base);
+  font-family: inherit;
+}
+
+.form-group textarea {
+  min-height: 20rem;
+  resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: 2px solid hsl(var(--clr-primary-base));
+  border-color: hsl(var(--clr-primary-base));
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-micro);
+}
+.form-check label {
+  margin-bottom: 0; /* Remove a margem extra da label */
+}
+.help-text {
+  font-size: var(--fs-sm);
+  color: hsl(var(--clr-gray-base));
+  margin-top: var(--spacing-micro);
+}
+
+.btn {
+  background: hsl(var(--clr-primary-base));
+  color: hsl(var(--clr-white));
+  padding: var(--spacing-smlst) var(--spacing-base);
+  border-radius: var(--br-base);
+  border: none;
+  font-size: var(--fs-base);
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 200ms ease-in-out;
+}
+
+.btn:hover {
+  background: hsl(var(--clr-primary-dk));
+}
+
+.nav-button-secondary {
+  background: hsl(var(--clr-gray-lt));
+  color: hsl(var(--clr-black));
+  padding: var(--spacing-micro) var(--spacing-smlst);
+  border-radius: var(--br-base);
+  font-weight: bold;
+  white-space: nowrap;
+  border: 1px solid hsl(var(--clr-gray-base));
+}
+
+.nav-button-secondary:hover {
+  background: hsl(var(--clr-gray-base));
+  color: hsl(var(--clr-white));
+  text-decoration: none;
+}
+
+/* ====================================
+   MODIFICADORES DE BOTÃO
+   ==================================== */
+
+.btn-danger {
+  /* Usamos a mesma HUE base, mas com saturação e luminosidade
+     que resultam em um tom de vermelho. 
+     Ajuste o '355' para um tom que preferir (0 ou 360 é vermelho puro). */
+  --_btn-danger-hue: 0; 
+  background-color: hsl(var(--_btn-danger-hue) 75% 50%); /* Vermelho forte */
+}
+
+.btn-danger:hover {
+  background-color: hsl(var(--_btn-danger-hue) 75% 40%); /* Vermelho mais escuro */
+}

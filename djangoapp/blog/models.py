@@ -7,8 +7,9 @@ funcionalidades específicas para gerenciamento de conteúdo e SEO.
 """
 
 from django.db import models
-from utils.rands import slugify, random_slug
-from django.contrib.auth.models import User
+from django.utils.text import slugify as django_slugify
+from unidecode import unidecode
+from utils.rands import random_slug
 from django.contrib.auth import get_user_model
 from utils.images import resize_image
 from django_summernote.models import AbstractAttachment
@@ -61,7 +62,7 @@ class Tag(models.Model):
         if not self.slug:
             # 2. GERA O SLUG LIMPO
             # Usa a sua poderosa função slugify para limpar o campo 'name'.
-            self.slug = slugify(self.name)
+            self.slug = django_slugify(unidecode(self.name))
 
         # --- LÓGICA EXTRA PARA GARANTIR UNICIDADE ---
         # Guarda o slug original para o caso de precisarmos adicionar um sufixo
@@ -71,8 +72,7 @@ class Tag(models.Model):
         # self.__class__ é uma forma segura de se referir ao model atual (Tag).
         # Usamos .exclude(pk=self.pk) para não encontrar a si mesmo ao editar.
         queryset = self.__class__.objects.filter(
-            slug=self.slug
-        ).exclude(pk=self.pk)
+            slug=self.slug).exclude(pk=self.pk)
 
         # 3. VERIFICA SE O SLUG JÁ EXISTE
         # Se o queryset encontrou alguma coisa, significa que o slug já está em uso.
@@ -120,6 +120,21 @@ class Category(models.Model):
     slug = models.SlugField(
         max_length=100, unique=True, blank=True)
 
+    # MÉTODO SAVE ADICIONADO PARA GERAR SLUG
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = django_slugify(unidecode(self.name))
+
+        original_slug = self.slug
+        queryset = self.__class__.objects.filter(
+            slug=self.slug
+        ).exclude(pk=self.pk)
+
+        if queryset.exists():
+            self.slug = f'{original_slug}-{random_slug(k=4)}'
+
+        super().save(*args, **kwargs)
+
     def __str__(self) -> str:
         """
         Retorna a representação em string da categoria.
@@ -128,30 +143,6 @@ class Category(models.Model):
             str: O nome da categoria
         """
         return self.name
-
-
-def get_absolute_url(self):
-    """
-    Retorna a URL canônica para o post.
-
-    Este método é usado pelo Django para gerar URLs para o objeto.
-    É especialmente útil em templates e para SEO.
-
-    Returns:
-        str: URL do post se publicado e com slug, senão URL da página inicial
-
-    Logic:
-        - Se o post não está publicado OU não tem slug: retorna página inicial
-        - Se o post está publicado E tem slug: retorna URL específica do post
-    """
-    # Se o post NÃO tem um slug (ou seja, ainda não foi salvo),
-    # ou se ele simplesmente não está publicado, não podemos (ou não queremos)
-    # apontar para sua página de detalhe.
-    # Nesse caso, podemos retornar para a página inicial do blog.
-    if not self.is_published or not self.slug:
-        return reverse('blog:index')
-    # Se ele está publicado e tem um slug, retornamos a URL correta.
-    return reverse('blog:page', args=(self.slug,))
 
 
 class Page(models.Model):
@@ -188,7 +179,7 @@ class Page(models.Model):
             **kwargs: Argumentos nomeados passados para o método save original
         """
         if not self.slug:
-            self.slug = slugify(self.title)
+            self.slug = django_slugify(unidecode(self.title))
 
         # A lógica de unicidade pode ser exatamente a mesma
         original_slug = self.slug
@@ -317,7 +308,7 @@ class Post(models.Model):
         # (Executado ANTES do super().save())
         if not self.slug:
             # Gera o slug a partir do 'title' e garante unicidade
-            self.slug = slugify(self.title)
+            self.slug = django_slugify(unidecode(self.title))
             original_slug = self.slug
             queryset = self.__class__.objects.filter(
                 slug=self.slug

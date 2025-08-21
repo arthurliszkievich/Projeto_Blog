@@ -1,0 +1,86 @@
+{% extends 'blog/base.html' %}
+
+{% block additional_head %}
+  {{ form.media }}
+{% endblock additional_head %}
+
+{% block content %}
+<main class="main-content section-wrapper">
+  <div class="section-content-narrow">
+    <div class="section-gap">
+      <div class="page-header">
+        <h2 class="page-title">{{ page_main_title|default:'Formulário' }}</h2>
+      </div>
+
+      <form method="POST" enctype="multipart/form-data" class="form-wrapper">
+        {% csrf_token %}
+        
+        {# Seus campos de formulário... #}
+        <div class="form-group">
+          <label for="{{ form.title.id_for_label }}">Título</label>
+          {{ form.title }}
+        </div>
+        <div class="form-group">
+          <label for="{{ form.excerpt.id_for_label }}">Resumo (Excerpt)</label>
+          {{ form.excerpt }}
+        </div>
+        <div class="form-group">
+          <label for="{{ form.content.id_for_label }}">Conteúdo</label>
+          {{ form.content }}
+        </div>
+        <div class="form-group">
+          <label for="{{ form.category.id_for_label }}">Categoria</label>
+          <p class="help-text">Escolha uma categoria existente...</p>
+          {{ form.category }}
+        </div>
+        <div class="form-group">
+          <label for="{{ form.category_input.id_for_label }}">{{ form.category_input.label }}</label>
+          {{ form.category_input }}
+        </div>
+        <div class="form-group">
+          <label for="{{ form.tags_input.id_for_label }}">{{ form.tags_input.label }}</label>
+          {{ form.tags_input }}
+          <p class="help-text">Separe as tags por vírgula.</p>
+        </div>
+        <div class="form-group">
+          <label for="{{ form.cover.id_for_label }}">Imagem de Capa</label>
+          {{ form.cover }}
+        </div>
+        <div class="form-group form-check">
+          {{ form.cover_in_post_content }}
+          <label for="{{ form.cover_in_post_content.id_for_label }}">
+            Exibir imagem de capa no conteúdo do post?
+          </label>
+        </div>
+        <div class="form-group form-check">
+          {{ form.is_published }}
+          <label for="{{ form.is_published.id_for_label }}">
+            Publicar este post?
+          </label>
+          <p class="help-text">
+            Se esta opção não for marcada, o post será salvo como um rascunho.
+          </p>
+        </div>
+
+        <div class="form-group">
+          <button class="btn" type="submit">Salvar</button>
+        </div>
+      </form>
+    
+      {% if object.pk %}
+      <div class="form-group">
+        <form 
+          action="{% url 'blog:post_delete' object.slug %}" 
+          method="POST"
+          onsubmit="return confirm('Tem certeza que deseja excluir este post permanentemente?');"
+        >
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Excluir Post</button>
+        </form>
+      </div>
+      {% endif %}
+      
+    </div>
+  </div>
+</main>
+{% endblock content %}

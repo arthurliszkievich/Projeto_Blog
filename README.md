@@ -139,6 +139,6 @@ Este projeto adota o padrão de **Conventional Commits** para manter um históri
 ### 👨‍💻 Autor
 
 -   **Arthur Liskievich**
--   **GitHub:** [arthurtobieich](https://github.com/arthurtobieich)
+-   **GitHub:** [arthurtobieich](https://github.com/arthurliszkievich)
 
 ---

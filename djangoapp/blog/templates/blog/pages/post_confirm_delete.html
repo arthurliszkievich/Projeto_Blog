@@ -1,0 +1,41 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+<main class="main-content section-wrapper">
+  <div class="section-content-narrow">
+    <div class="section-gap">
+      
+      <div class="form-wrapper center-text">
+        <h2 class="pb-base">Confirmar Exclusão</h2>
+
+        <p class="pb-base">
+          Você tem certeza que deseja excluir permanentemente o post:
+          <br>
+          <strong>"{{ object.title }}"</strong>?
+        </p>
+        <p class="pb-base">
+          <strong>Esta ação não pode ser desfeita.</strong>
+        </p>
+
+        <form method="POST">
+          {% csrf_token %}
+          
+          <div class="form-group">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+              
+              {# Botão que confirma a exclusão (envia o formulário via POST) #}
+              <button class="btn btn-danger" type="submit">Sim, excluir</button>
+
+              {# Link para cancelar e voltar para a página do post #}
+              <a href="{% url 'blog:post' object.slug %}" class="btn btn-secondary">Cancelar</a>
+
+            </div>
+          </div>
+        </form>
+
+      </div>
+
+    </div>
+  </div>
+</main>
+{% endblock content %}

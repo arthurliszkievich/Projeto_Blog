@@ -1,7 +1,7 @@
 {% extends 'blog/base.html' %}
 
 {% block additional_head %}
-  {{ form.media }}
+{{ form.media }}
 {% endblock additional_head %}
 
 {% block content %}
@@ -12,10 +12,11 @@
         <h2 class="page-title">{{ page_main_title|default:'Formulário' }}</h2>
       </div>
 
+      <!-- Formulário Principal (Edição/Criação) -->
       <form method="POST" enctype="multipart/form-data" class="form-wrapper">
         {% csrf_token %}
-        
-        {# Seus campos de formulário... #}
+
+        <!-- Renderiza todos os campos do formulário... -->
         <div class="form-group">
           <label for="{{ form.title.id_for_label }}">Título</label>
           {{ form.title }}
@@ -34,11 +35,12 @@
           {{ form.category }}
         </div>
         <div class="form-group">
-          <label for="{{ form.category_input.id_for_label }}">{{ form.category_input.label }}</label>
+          <label for="{{ form.category_input.id_for_label }}">Nova Categoria</label>
+          <p class="help-text">Crie uma nova categoria.</p>
           {{ form.category_input }}
         </div>
         <div class="form-group">
-          <label for="{{ form.tags_input.id_for_label }}">{{ form.tags_input.label }}</label>
+          <label for="{{ form.tags_input.id_for_label }}">Tags</label>
           {{ form.tags_input }}
           <p class="help-text">Separe as tags por vírgula.</p>
         </div>
@@ -63,24 +65,19 @@
         </div>
 
         <div class="form-group">
-          <button class="btn" type="submit">Salvar</button>
+          <div style="display: flex; align-items: center; gap: 10px;">
+
+            <button class="btn btn-primary" type="submit">Salvar</button>
+
+            {# Mostra o botão de excluir apenas na página de edição #}
+            {% if form.instance.pk %}
+            <a href="{% url 'blog:post_delete' form.instance.slug %}" class="btn btn-danger">Excluir Post</a>
+            {% endif %}
+
+          </div>
         </div>
-      </form>
-    
-      {% if object.pk %}
-      <div class="form-group">
-        <form 
-          action="{% url 'blog:post_delete' object.slug %}" 
-          method="POST"
-          onsubmit="return confirm('Tem certeza que deseja excluir este post permanentemente?');"
-        >
-          {% csrf_token %}
-          <button type="submit" class="btn btn-danger">Excluir Post</button>
-        </form>
+
       </div>
-      {% endif %}
-      
     </div>
-  </div>
-</main>
-{% endblock content %}
+  </main>
+  {% endblock content %}

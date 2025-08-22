@@ -23,8 +23,15 @@
         <ul class="menu-items">
           {% if user.is_authenticated %}
             <li class="menu-item"><a href="{% url 'blog:post_drafts' %}">Meus Rascunhos</a></li>
-            <li class="menu-item"><a href="{% url 'blog:post_create' %}" class="nav-button">Criar Post</a></li>
-            {# Adicionamos a nova classe CSS ao botão Sair #}
+          
+            {% if post and post.created_by == user %}
+              {# Se estivermos na página de um post e o usuário for o autor, mostre "Editar". #}
+              <li class="menu-item"><a href="{% url 'blog:post_update' post.slug %}" class="nav-button">Editar Post</a></li>
+            {% else %}
+              {# Caso contrário, mostre o botão padrão "Criar Post". #}
+              <li class="menu-item"><a href="{% url 'blog:post_create' %}" class="nav-button">Criar Post</a></li>
+            {% endif %}
+
             <li class="menu-item"><a href="{% url 'blog:logout' %}" class="nav-button-secondary">Sair</a></li>
           {% else %}
             <li class="menu-item"><a href="{% url 'blog:login' %}">Entrar</a></li>
@@ -42,6 +49,5 @@
       </nav>
     {% endif %}
   
-
   </div>
 </header>

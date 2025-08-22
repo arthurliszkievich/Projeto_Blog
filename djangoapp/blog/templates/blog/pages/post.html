@@ -26,6 +26,7 @@
 <main class="main-content single-post section-wrapper">
   <div class="single-post-content section-content-narrow">
     <div class="single-post-gap section-gap">
+      
       {% if post.cover and post.cover_in_post_content %}
       <div class="single-post-cover pb-base">
         <img loading="lazy"
@@ -38,28 +39,7 @@
         {{ post.title }}
       </h2>
       
-      <!-- ========================================================== -->
-      <!-- CÓDIGO DO BOTÃO DE EDITAR ADICIONADO AQUI                  -->
-      <!-- ========================================================== -->
-      {% if user.is_authenticated and user == post.created_by %}
-        <div class="edit-post-link pb-base" style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: .25rem; padding: 1rem;">
-          <p><strong>Opções de Administrador:</strong></p>
-          <a href="{% url 'blog:post_update' post.slug %}" class="btn btn-primary">
-            Editar Post
-          </a>
-          <p class="mt-2 mb-0">
-            <small class="text-muted">
-              Status atual: 
-              <strong>
-                {% if post.is_published %} Publicado {% else %} Rascunho {% endif %}
-              </strong>
-            </small>
-          </p>
-        </div>
-      {% endif %}
-      <!-- ========================================================== -->
-      <!-- FIM DO CÓDIGO DO BOTÃO                                     -->
-      <!-- ========================================================== -->
+      <!-- O bloco de "Opções de Administrador" foi removido daqui -->
 
       <div class="post-meta pb-base">
         <div class="post-meta-item">
@@ -82,7 +62,7 @@
             <span>
               {{ post.created_at | date:"d/m/Y" }}
             </span>
-          </span> {# Corrigido o fechamento da tag span aqui #}
+          </span>
         </div>
         {% if post.category %}
         <div class="post-meta-item">

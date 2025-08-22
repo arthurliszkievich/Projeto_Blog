@@ -5,30 +5,37 @@
   <div class="section-content-narrow">
     <div class="section-gap">
       
-      <div class="page-header">
-        <h2 class="page-title">Login</h2>
-      </div>
+      <div class="form-wrapper">
+        <h2 class="center-text pb-base">Login</h2>
 
-      <form method="POST">
-        {% csrf_token %}
+        <form method="POST">
+          {% csrf_token %}
 
-        {% if form.errors %}
-          <div class="not-found center">
-            <p>Houve um erro no login, por favor verifique suas credenciais.</p>
+          {% if form.errors %}
+            <div class="message message-error">
+              <p>Usuário ou senha inválidos. Por favor, tente novamente.</p>
+            </div>
+          {% endif %}
+          
+          <div class="form-group">
+            <label for="id_username">Usuário</label>
+            <input type="text" name="username" id="id_username" required>
           </div>
-        {% endif %}
+          <div class="form-group">
+            <label for="id_password">Senha</label>
+            <input type="password" name="password" id="id_password" required>
+          </div>
+
+          <div class="form-group">
+            <button class="btn" type="submit">Entrar</button>
+          </div>
+        </form>
         
-        <p>
-          <label for="id_username">Usuário</label>
-          <input type="text" name="username" id="id_username" required>
-        </p>
-        <p>
-          <label for="id_password">Senha</label>
-          <input type="password" name="password" id="id_password" required>
+        <p class="center-text pt-base">
+          Não tem uma conta? <a href="{% url 'blog:register' %}">Registre-se</a>.
         </p>
 
-        <button type="submit">Entrar</button>
-      </form>
+      </div>
 
     </div>
   </div>

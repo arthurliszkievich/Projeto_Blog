@@ -667,3 +667,26 @@ html,
 .btn-danger:hover {
   background-color: hsl(var(--_btn-danger-hue) 75% 40%); /* Vermelho mais escuro */
 }
+
+.form-actions-container {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem; /* Cria um espaço entre os botões */
+  flex-wrap: wrap; /* Permite que os botões quebrem a linha em telas muito pequenas */
+}
+
+.single-post-content {
+  /* Estas duas propriedades garantem a quebra de texto */
+  overflow-wrap: break-word;
+  word-wrap: break-word; /* Fallback para navegadores mais antigos */
+  word-break: break-word;
+}
+
+.single-post-cover img {
+    width: 100%;       /* Faz a imagem ocupar toda a largura do seu contêiner pai */
+    height: auto;      /* Mantém a proporção da imagem */
+    max-width: 800px;  /* Define uma largura máxima para não ficar gigante em telas grandes */
+    display: block;    /* Remove espaços extras abaixo da imagem */
+    margin: 0 auto;    /* Centraliza a imagem se o contêiner for mais largo que 800px */
+    border-radius: 5px; /* Um toque de estilo */
+}

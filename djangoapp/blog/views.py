@@ -6,10 +6,26 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.contrib.auth import get_user_model, logout
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy, reverse
 
 User = get_user_model()
+
+
+class SignUpView(CreateView):
+    """
+    View para registrar um novo usuário.
+    """
+    form_class = UserCreationForm
+    success_url = reverse_lazy('blog:login')
+    template_name = 'blog/pages/register.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'Registro - '
+        context['page_main_title'] = 'Crie a sua conta'
+        return context
 
 
 # ===================================================================

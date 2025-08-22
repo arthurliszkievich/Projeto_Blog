@@ -1,0 +1,38 @@
+{# blog/templates/blog/pages/register.html #}
+{% extends 'blog/base.html' %}
+
+{% block content %}
+<main class="main-content section-wrapper">
+  <div class="section-content-narrow">
+    <div class="section-gap">
+      <div class="form-wrapper">
+        <h2 class="center-text pb-base">{{ page_main_title }}</h2>
+        <form action="" method="POST">
+          {% csrf_token %}
+          
+          {% if form.errors %}
+            <div class="message message-error">
+              <p>Por favor, corrija os erros abaixo.</p>
+            </div>
+          {% endif %}
+          
+          {% for field in form %}
+            <div class="form-group">
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {{ field.errors }}
+              {% if field.help_text %}
+                <p class="help-text">{{ field.help_text|safe }}</p>
+              {% endif %}
+            </div>
+          {% endfor %}
+          
+          <div class="form-group">
+            <button class="btn" type="submit">Registrar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock content %}

@@ -33,6 +33,11 @@ urlpatterns = [
     path('my-posts/drafts/', views.DraftsView.as_view(), name='post_drafts'),
 
     # --- ROTAS DE AUTENTICAÇÃO ---
-    path('login/', auth_views.LoginView.as_view(template_name='blog/pages/login.html'), name='login'),
+    path('login/', auth_views.LoginView.as_view(
+        template_name='blog/pages/login.html',
+        # Impede que usuários logados vejam a pág. de login
+        redirect_authenticated_user=True
+    ), name='login'),
     path('logout/', views.logout_view, name='logout'),
+    path('register/', views.SignUpView.as_view(), name='register'),
 ]
